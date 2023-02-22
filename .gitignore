@@ -1,0 +1,4 @@
+dbcreds.py
+.vscode/
+venv/
+__pycache__
