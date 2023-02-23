@@ -10,17 +10,30 @@ import uuid
 def client_login():
     email = request.json.get('email')
     password = request.json.get('password')
-    result = run_statement('CALL client_login (?,?)' , [email, password])
+    result = run_statement('CALL client_login (?,?)' , email, password)
     if (type(result) == list):
-        return json.dumps("clientId: {}".format (result, default=str))
+        return json.dumps("ClientId: {}".format (result))
     else:
         return make_response(jsonify(result), 500)
 
 @app.delete('/api/clientsession')
 def client_logout():
     id = request.json.get('id')
-    result = run_statement('CALL client_logout (?)', [id])
+    result = run_statement('CALL client_logout (?)', id)
     if result == None:
         return make_response(jsonify("Client Logged out"), 200)
     else:
         return make_response(jsonify("Something went wrong"), 500)
+
+@app.get('/api/clientprofile')
+def get_clients():
+    id = request.json.get('id')
+    result = run_statement('CALL get_clients (?)', [id])
+    keys = ["id", "username", "first_name", "last_name", "email", "picture_url", "created_at"]
+    response = []
+    if (type(result) == list):
+        for id in result:
+            response.append(dict(zip(keys,id)))
+        return make_response(jsonify(response), 200)
+    else:
+        return make_response(jsonify(result), 500)
