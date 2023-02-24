@@ -37,3 +37,52 @@ def get_clients():
         return make_response(jsonify(response), 200)
     else:
         return make_response(jsonify(result), 500)
+
+@app.post('/api/clientprofile')
+def add_client():
+    username = request.json.get('username')
+    first_name = request.json.get('first_name')
+    last_name = request.json.get('last_name')
+    email = request.json.get('email')
+    password = request.json.get('password')
+    picture_url = request.json.get('picture_url')
+    result = run_statement('CALL add_client (?,?,?,?,?,?)', [username, first_name, 
+    last_name, email, password, picture_url])
+    if (type(result) == list):
+        return json.dumps("ClientId: {}".format (result))
+    else:
+        return make_response(jsonify(result), 500)
+
+@app.patch('/api/clientprofile')
+def update_client():
+    id = request.json.get('id')
+    username = request.json.get('username')
+    first_name = request.json.get('first_name')
+    last_name = request.json.get('last_name')
+    password = request.json.get('password')
+    picture_url = request.json.get('picture_url')
+    result = run_statement('CALL update_client (?,?,?,?,?,?)', [id, username, first_name, 
+    last_name, password, picture_url])
+    if result == None:
+        return make_response(jsonify("Client info updated"), 200)
+    else:
+        return make_response(jsonify("Something went wrong"), 500)
+
+
+@app.delete('/api/clientprofile')
+def delete_client():
+    id = request.json.get('id')
+    result = run_statement('CALL delete_client (?)', [id])
+    if result == None:
+        return make_response(jsonify("Client Profile has been deleted"), 200)
+    else:
+        return make_response(jsonify("Something went wrong"), 500)
+# @app.delete('/api/clientprofile')
+# def delete_client():
+#     id = request.json.get('id')
+#     result = run_statement('CALL delete_client (?)', id)
+#     if result == None:
+#         return make_response(jsonify("Client profile has been deleted"), 200)
+#     else:
+#         return make_response(jsonify("Something went wrong"), 500)
+
