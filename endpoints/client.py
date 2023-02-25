@@ -1,7 +1,6 @@
 from app import app
 from flask import request, make_response, jsonify
 from dbhelpers import run_statement
-# from dbhelpers import verify_login
 import json
 import uuid
 
@@ -29,8 +28,8 @@ def client_login():
 
 @app.delete('/api/clientsession')
 def client_logout():
-    id = request.json.get('id')
-    result = run_statement('CALL client_logout (?)', [id])
+    session_id = request.json.get('session_id')
+    result = run_statement('CALL client_logout (?)', [session_id])
     if result == None:
         return make_response(jsonify("Client Logged out"), 200)
     else:
