@@ -38,6 +38,9 @@ def client_logout():
 @app.get('/api/clientprofile')
 def get_clients():
     id = request.json.get('id')
+    token = uuid.uuid4().hex
+    if token != token:
+        return make_response((jsonify("Error"),401))
     result = run_statement('CALL get_clients (?)', [id])
     keys = ["id", "username", "first_name", "last_name", "email", "picture_url", "created_at"]
     response = []
