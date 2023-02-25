@@ -11,11 +11,19 @@ import uuid
 def client_login():
     email = request.json.get('email')
     password = request.json.get('password')
-    # token = uuid.uuid4().hex
-    result = run_statement('CALL client_login (?,?)', [email, password])
-    # print ("Token: {}".format (token))
+    token = uuid.uuid4().hex
+    result = run_statement("CALL verify_client (?)", [email])
+    client_id=result[0][0]
+    storedpassword=result[0][1]
+    if storedpassword != password:
+        return make_response(jsonify("Password does not match"),401)
+    result = run_statement('CALL client_login (?,?)', [client_id, token])
     if (type(result) == list):
-        return json.dumps("ClientId: {}".format (result))
+        response = {
+            "clientId" : result[0][0],
+            "token" : result[0][1]
+        }
+        return make_response(jsonify(response), 201)
     else:
         return make_response(jsonify(result), 500)
 
