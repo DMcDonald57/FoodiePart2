@@ -59,3 +59,18 @@ def run_statement(statement, args=[]):
     result = execute_statement(cursor, statement, args)
     disconnect_db(cursor)
     return result
+
+    # test verification code
+
+# def verify_login(email, password):
+#     cursor = connect_db()
+#     sql = "SELECT * FROM client WHERE email = %s AND password = %s"
+#     values = (email , password)
+#     cursor.execute(sql, values)
+#     result = cursor.fetchone()
+#     if result is None:
+#         return False
+#     else:
+#         return True
+
+# end test code

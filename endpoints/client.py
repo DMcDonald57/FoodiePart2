@@ -1,6 +1,7 @@
 from app import app
 from flask import request, make_response, jsonify
 from dbhelpers import run_statement
+# from dbhelpers import verify_login
 import json
 import uuid
 
@@ -10,7 +11,9 @@ import uuid
 def client_login():
     email = request.json.get('email')
     password = request.json.get('password')
-    result = run_statement('CALL client_login (?,?)' , email, password)
+    # token = uuid.uuid4().hex
+    result = run_statement('CALL client_login (?,?)', [email, password])
+    # print ("Token: {}".format (token))
     if (type(result) == list):
         return json.dumps("ClientId: {}".format (result))
     else:
@@ -19,7 +22,7 @@ def client_login():
 @app.delete('/api/clientsession')
 def client_logout():
     id = request.json.get('id')
-    result = run_statement('CALL client_logout (?)', id)
+    result = run_statement('CALL client_logout (?)', [id])
     if result == None:
         return make_response(jsonify("Client Logged out"), 200)
     else:
@@ -77,12 +80,3 @@ def delete_client():
         return make_response(jsonify("Client Profile has been deleted"), 200)
     else:
         return make_response(jsonify("Something went wrong"), 500)
-# @app.delete('/api/clientprofile')
-# def delete_client():
-#     id = request.json.get('id')
-#     result = run_statement('CALL delete_client (?)', id)
-#     if result == None:
-#         return make_response(jsonify("Client profile has been deleted"), 200)
-#     else:
-#         return make_response(jsonify("Something went wrong"), 500)
-
