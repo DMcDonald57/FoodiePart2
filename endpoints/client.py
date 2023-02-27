@@ -59,10 +59,17 @@ def add_client():
     email = request.json.get('email')
     password = request.json.get('password')
     picture_url = request.json.get('picture_url')
+    token = uuid.uuid4().hex
     result = run_statement('CALL add_client (?,?,?,?,?,?)', [username, first_name, 
     last_name, email, password, picture_url])
+    client_id=result[0][0]
+    result = run_statement('CALL client_login (?,?)', [client_id, token])
     if (type(result) == list):
-        return json.dumps("ClientId: {}".format (result))
+        response = {
+            "clientId" : result[0][0],
+            "token" : [token]
+        }
+        return make_response(jsonify(response), 201)
     else:
         return make_response(jsonify(result), 500)
 
