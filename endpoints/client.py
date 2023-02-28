@@ -86,9 +86,6 @@ def update_client():
         return make_response((jsonify("Error"),401))
     result = run_statement('CALL update_client (?,?,?,?,?,?)', [id, username, first_name, 
     last_name, password, picture_url])
-    token = uuid.uuid4().hex
-    if token != token:
-        return make_response((jsonify("Error"),401))
     if result == None:
         return make_response(jsonify("Client info updated"), 200)
     else:

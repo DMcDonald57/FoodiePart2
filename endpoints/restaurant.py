@@ -72,3 +72,24 @@ def add_restaurant():
         return make_response(jsonify(response), 201)
     else:
         return make_response(jsonify(result), 500)
+    
+@app.patch('/api/restaurantprofile')
+def update_restaurant():
+    id = request.json.get('id')
+    name = request.json.get('name')
+    bio = request.json.get('bio')
+    address = request.json.get('address')
+    city = request.json.get('city')
+    phone_num = request.json.get('phone_num')
+    profile_url = request.json.get('picture_url')
+    banner_url = request.json.get('banner_url')
+    password = request.json.get('password')
+    token = uuid.uuid4().hex
+    if token != token:
+        return make_response((jsonify("Error"),401))
+    result = run_statement('CALL update_restaurant (?,?,?,?,?,?,?,?,?)', [id, name, bio, 
+    address, city, phone_num, profile_url, banner_url, password])
+    if result == None:
+        return make_response(jsonify("Restaurant info updated"), 200)
+    else:
+        return make_response(jsonify("Something went wrong"), 500)
