@@ -37,8 +37,14 @@ def client_logout():
 
 @app.get('/api/clientprofile')
 def get_clients():
+    email = request.json.get('email')
+    password = request.json.get('password')
     id = request.json.get('id')
     token = uuid.uuid4().hex
+    result = run_statement("CALL verify_client (?)", [email])
+    storedpassword=result[0][1]
+    if storedpassword != password:
+        return make_response(jsonify("Password does not match"),401)
     if token != token:
         return make_response((jsonify("Error"),401))
     result = run_statement('CALL get_clients (?)', [id])
@@ -76,12 +82,17 @@ def add_client():
 @app.patch('/api/clientprofile')
 def update_client():
     id = request.json.get('id')
+    email = request.json.get('email')
     username = request.json.get('username')
     first_name = request.json.get('first_name')
     last_name = request.json.get('last_name')
     password = request.json.get('password')
     picture_url = request.json.get('picture_url')
     token = uuid.uuid4().hex
+    result = run_statement("CALL verify_client (?)", [email])
+    storedpassword=result[0][1]
+    if storedpassword != password:
+        return make_response(jsonify("Password does not match"),401)
     if token != token:
         return make_response((jsonify("Error"),401))
     result = run_statement('CALL update_client (?,?,?,?,?,?)', [id, username, first_name, 
@@ -94,7 +105,16 @@ def update_client():
 
 @app.delete('/api/clientprofile')
 def delete_client():
+    email = request.json.get('email')
+    password = request.json.get('password')
     id = request.json.get('id')
+    token = uuid.uuid4().hex
+    result = run_statement("CALL verify_client (?)", [email])
+    storedpassword=result[0][1]
+    if storedpassword != password:
+        return make_response(jsonify("Password does not match"),401)
+    if token != token:
+        return make_response((jsonify("Error"),401))
     result = run_statement('CALL delete_client (?)', [id])
     if result == None:
         return make_response(jsonify("Client Profile has been deleted"), 200)

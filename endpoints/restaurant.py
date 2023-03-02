@@ -76,6 +76,7 @@ def add_restaurant():
 @app.patch('/api/restaurantprofile')
 def update_restaurant():
     id = request.json.get('id')
+    email = request.json.get('email')
     name = request.json.get('name')
     bio = request.json.get('bio')
     address = request.json.get('address')
@@ -85,6 +86,10 @@ def update_restaurant():
     banner_url = request.json.get('banner_url')
     password = request.json.get('password')
     token = uuid.uuid4().hex
+    result = run_statement("CALL verify_restaurant (?)", [email])
+    storedpassword=result[0][1]
+    if storedpassword != password:
+        return make_response(jsonify("Password does not match"),401)
     if token != token:
         return make_response((jsonify("Error"),401))
     result = run_statement('CALL update_restaurant (?,?,?,?,?,?,?,?,?)', [id, name, bio, 
